@@ -27,8 +27,6 @@ class ControllerExtensionPaymentEripExpressPay extends Controller
 
         $data['EmailNotification'] = $order_info['email'];
 
-
-
         //Обрезать +
         //заменить знаки (' ', '-','(',')') на пустую строку
         //посчитать количество символов
@@ -53,19 +51,9 @@ class ControllerExtensionPaymentEripExpressPay extends Controller
         return true;
     }
 
-    //Test Link = http://opencart3:8080/index.php?route=extension/payment/erip_expresspay/success?ExpressPayAccountNumber=21&ExpressPayInvoiceNo=347153&Signature=9047222EE0A0C53A8F3C8883885575FD1734AFF7
-
     public function success()
     {
         $this->load->model('extension/payment/erip_expresspay');
-
-        /*if(!$this->model_extension_payment_erip_expresspay->checkResponse($_REQUEST['Signature'], $_REQUEST, $this->config))
-        {
-            echo 'die';
-            die();
-        }
-        */
-
 
         $this->cart->clear();
 
@@ -134,7 +122,7 @@ class ControllerExtensionPaymentEripExpressPay extends Controller
                 $response = curl_exec($ch);
                 curl_close($ch);
             } catch (Exception $e) {
-                $this->log_error_exception('success', 'Get response; INVOICE ID - ' . $invoiceId . '; RESPONSE - ' . $response, $e);
+                $this->log_error_exception('success', 'Get response; INVOICE ID - ' . $this->session->data['order_id'] . '; RESPONSE - ' . $response, $e);
                 return;
             }
 
@@ -142,7 +130,7 @@ class ControllerExtensionPaymentEripExpressPay extends Controller
             try {
                 $response = json_decode($response);
             } catch (Exception $e) {
-                $this->log_error_exception('receipt_page', 'Get response; ORDER ID - ' . $order_id . '; RESPONSE - ' . $response, $e);
+                $this->log_error_exception('receipt_page', 'Get response; ORDER ID - ' . $this->session->data['order_id'] . '; RESPONSE - ' . $response, $e);
             }
 
             if (isset($response->QrCodeBody)) {
